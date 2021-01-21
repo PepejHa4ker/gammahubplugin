@@ -17,9 +17,17 @@ repositories {
 
 dependencies {
     compileOnly("org.bstats:bstats-bukkit:1.7")
-    compileOnly("org.spigotmc:spigot-api:1.12.2-R0.1-SNAPSHOT")
-    compileOnly fileTree(dir: "libs")
-    annotationProcessor fileTree(dir: "libs")
+    compileOnly("org.spigotmc:spigot-api:1.12.2-R0.1-SNAPSHOT") {
+       exclude group: 'com.google.guava'
+       exclude group: 'com.google.code.gson'
+       exclude group: 'com.googlecode.json-simple'
+       exclude group: 'commons-lang'
+       exclude group: "org.yaml"
+    }
+    compileOnly(dir: "libs") {
+        exclude group: 'javax'
+    }
+    annotationProcessor(dir: "libs")
     //lombok
     compileOnly 'org.projectlombok:lombok:1.18.16'
     annotationProcessor 'org.projectlombok:lombok:1.18.16'
@@ -27,8 +35,6 @@ dependencies {
     compileOnly("com.comphenix.protocol:ProtocolLib:4.5.0")
     //npcs
     compileOnly("net.citizensnpcs:citizens:2.0.22-SNAPSHOT")
-    //checkerfw
-    compileOnly("org.checkerframework:checker:3.7.0")
 }
 
 compileJava.options.encoding = 'UTF-8'
