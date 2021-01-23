@@ -32,6 +32,7 @@ dependencies {
        exclude group: 'commons-lang'
        exclude group: "org.yaml"
     }
+    //papi
     compileOnly fileTree(dir: "libs")
     annotationProcessor fileTree(dir: "libs")
     //lombok

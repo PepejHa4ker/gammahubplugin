@@ -45,7 +45,7 @@ public class ServerMenu extends Menu {
     @Override
     @SneakyThrows
     public void redraw() {
-        index = index == 15 ? 1 : index == 8 ? 9 : index + 1;
+        index = index == 15 ? 1 : index == 7 ? 8 : index + 1;
         fillWith(StandardSchemeMappings.STAINED_GLASS.get(index).get());
         BungeeCord bungee = Services.load(BungeeCord.class);
         MenuPopulator serverPopulator = SERVER_SCHEME.newPopulator(this);
