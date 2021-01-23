@@ -9,6 +9,7 @@ import com.pepej.papi.menu.scheme.MenuPopulator;
 import com.pepej.papi.menu.scheme.MenuScheme;
 import com.pepej.papi.menu.scheme.StandardSchemeMappings;
 import com.pepej.papi.messaging.bungee.BungeeCord;
+import com.pepej.papi.promise.ThreadContext;
 import com.pepej.papi.scheduler.Schedulers;
 import com.pepej.papi.utils.Players;
 import lombok.SneakyThrows;
@@ -20,7 +21,7 @@ import org.bukkit.entity.Player;
 import java.util.stream.Collectors;
 
 public class ServerMenu extends Menu {
-    private static final MenuScheme SERVER_SCHEME =  new MenuScheme()
+    private static final MenuScheme SERVER_SCHEME = new MenuScheme()
             .maskEmpty(1)
             .mask("001000100")
             .mask("000010000")
@@ -32,9 +33,12 @@ public class ServerMenu extends Menu {
 
     public ServerMenu(Player player) {
         super(player, 6, "&l&7[&l&cМеню &l&6режимов&l&7]");
-        Schedulers.sync()
-                  .runRepeating(this::redraw,0,20)
-                  .bindWith(this);
+        Schedulers
+                .builder()
+                .on(ThreadContext.ASYNC)
+                .every(20)
+                .run(this::redraw)
+                .bindWith(this);
 
     }
 
@@ -48,7 +52,7 @@ public class ServerMenu extends Menu {
         for (ServerInfo server : ServerInfo.getServers().stream().filter(s -> !s.isArcades()).collect(Collectors.toList())) {
             serverPopulator.accept(ItemStackBuilder.of(server.getMaterial())
                                                    .nameClickable(server.getName())
-                                                   .enchant(Enchantment.ARROW_DAMAGE,1)
+                                                   .enchant(Enchantment.ARROW_DAMAGE, 1)
                                                    .hideAttributes()
                                                    .lore(String.format("&aИгроков онлайн: &d%s", server.getOnline()))
                                                    .lore(server.getDescription())
@@ -87,12 +91,12 @@ public class ServerMenu extends Menu {
         public void redraw() {
             BungeeCord bungee = Services.load(BungeeCord.class);
             MenuPopulator serversPopulator = SERVERS_SCHEME.newPopulator(this);
-            this.setItem(0,ItemStackBuilder.head(Head.findByName("Red Arrow Left").getTexture())
-                                           .nameClickable("&cНазад")
-                                           .buildConsumer(e -> {
-                                               Player player = (Player) e.getWhoClicked();
-                                               new ServerMenu(player).open();
-                                           }));
+            this.setItem(0, ItemStackBuilder.head(Head.findByName("Red Arrow Left").getTexture())
+                                            .nameClickable("&cНазад")
+                                            .buildConsumer(e -> {
+                                                Player player = (Player) e.getWhoClicked();
+                                                new ServerMenu(player).open();
+                                            }));
 
 
             for (ServerInfo server : ServerInfo.getServers().stream().filter(ServerInfo::isArcades).collect(Collectors.toList())) {

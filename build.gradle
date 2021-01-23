@@ -1,7 +1,15 @@
-plugins {
-    id 'java'
-    id 'com.github.johnrengelman.shadow' version '6.1.0'
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.github.jengelman.gradle.plugins:shadow:6.1.0'
+    }
 }
+
+apply plugin: 'com.github.johnrengelman.shadow'
+apply plugin: 'java'
+
 
 group 'com.gamma'
 version '1.0'
@@ -24,10 +32,8 @@ dependencies {
        exclude group: 'commons-lang'
        exclude group: "org.yaml"
     }
-    compileOnly(dir: "libs") {
-        exclude group: 'javax'
-    }
-    annotationProcessor(dir: "libs")
+    compileOnly fileTree(dir: "libs")
+    annotationProcessor fileTree(dir: "libs")
     //lombok
     compileOnly 'org.projectlombok:lombok:1.18.16'
     annotationProcessor 'org.projectlombok:lombok:1.18.16'

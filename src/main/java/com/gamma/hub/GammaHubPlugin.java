@@ -12,7 +12,7 @@ import com.pepej.papi.plugin.PapiJavaPlugin;
 import lombok.Getter;
 
 
-@Plugin(name = "GammaHub", version = "1.0.0", depends = @PluginDependency("papi"))
+@Plugin(name = "HiveMCHub", version = "1.0.0", depends = @PluginDependency("papi"))
 @Getter
 public class GammaHubPlugin extends PapiJavaPlugin {
 

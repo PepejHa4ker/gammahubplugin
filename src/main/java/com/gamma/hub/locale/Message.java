@@ -22,7 +22,7 @@ public interface Message {
     Component PREFIX_COMPONENT = text()
             .color(GRAY)
             .append(text('['))
-            .append(text("HiveMC", AQUA))
+            .append(text("Gamma", AQUA))
             .append(text(']'))
             .build();
 
