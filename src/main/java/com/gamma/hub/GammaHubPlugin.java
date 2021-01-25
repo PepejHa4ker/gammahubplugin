@@ -1,6 +1,7 @@
 package com.gamma.hub;
 
 import com.gamma.hub.commands.GCommands;
+import com.gamma.hub.database.DatabaseManager;
 import com.gamma.hub.events.EventListener;
 import com.gamma.hub.managers.UserManager;
 import com.gamma.hub.model.Head;
@@ -8,11 +9,12 @@ import com.gamma.hub.model.ServerInfo;
 import com.pepej.papi.adventure.platform.bukkit.BukkitAudiences;
 import com.pepej.papi.ap.Plugin;
 import com.pepej.papi.ap.PluginDependency;
+import com.pepej.papi.maven.MavenLibrary;
 import com.pepej.papi.plugin.PapiJavaPlugin;
 import lombok.Getter;
 
-
-@Plugin(name = "", version = "1.0.0", depends = @PluginDependency("papi"))
+@MavenLibrary("com.zaxxer:HikariCP:3.3.1")
+@Plugin(name = "GammaHub", version = "1.0.0", depends = @PluginDependency("papi"))
 @Getter
 public class GammaHubPlugin extends PapiJavaPlugin {
 
@@ -25,6 +27,8 @@ public class GammaHubPlugin extends PapiJavaPlugin {
     }
 
     private UserManager userManager;
+
+    private DatabaseManager databaseManager;
 
 
     @Override
@@ -43,6 +47,7 @@ public class GammaHubPlugin extends PapiJavaPlugin {
         ServerInfo.load(getBundledFile("servers.json"));
         bindModule(new GCommands());
         this.userManager = bindModule(new UserManager());
+        this.databaseManager = bind(new DatabaseManager());
         this.audiences = bind(BukkitAudiences.create(this));
         bindModule(new EventListener());
 

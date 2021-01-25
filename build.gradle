@@ -42,6 +42,7 @@ dependencies {
     compileOnly("com.comphenix.protocol:ProtocolLib:4.5.0")
     //npcs
     compileOnly("net.citizensnpcs:citizens:2.0.22-SNAPSHOT")
+    compileOnly("com.zaxxer:HikariCP:3.3.1")
 }
 
 compileJava.options.encoding = 'UTF-8'

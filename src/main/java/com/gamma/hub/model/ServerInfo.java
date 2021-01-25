@@ -47,7 +47,7 @@ public class ServerInfo {
                   .every(5, TimeUnit.SECONDS)
                   .run(() -> {
                       for (ServerInfo server : servers) {
-//                          bungee.playerCount(server.getId()).thenAcceptAsync(server::setOnline);
+                         bungee.playerCount(server.getId()).thenAcceptAsync(server::setOnline);
                       }
                   });
     }
