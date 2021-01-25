@@ -16,7 +16,7 @@ public class DatabaseManager implements Terminable {
     private final HikariDataSource hikari;
 
     public DatabaseManager() {
-        final ConfigurationNode databaseConfig = ConfigFactory.gson().load(new File(GammaHubPlugin.getInstance().getDataFolder(), "config.json")).getNode("MySQL");
+        final ConfigurationNode databaseConfig = ConfigFactory.gson().load(GammaHubPlugin.getInstance().getBundledFile("config.json")).getNode("MySQL");
         HikariConfig config = new HikariConfig();
         config.setMaximumPoolSize(databaseConfig.getNode("Maximum-Pool-Size").getInt());
         config.setMinimumIdle(databaseConfig.getNode("Minimum-Pool-Idle").getInt());

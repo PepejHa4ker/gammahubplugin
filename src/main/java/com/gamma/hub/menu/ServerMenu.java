@@ -47,7 +47,6 @@ public class ServerMenu extends Menu {
     public void redraw() {
         index = index == 15 ? 1 : index == 8 ? 9 : index + 1;
         fillWith(StandardSchemeMappings.STAINED_GLASS.get(index).get());
-        BungeeCord bungee = Services.load(BungeeCord.class);
         MenuPopulator serverPopulator = SERVER_SCHEME.newPopulator(this);
         for (ServerInfo server : ServerInfo.getServers().stream().filter(s -> !s.isArcades()).collect(Collectors.toList())) {
             serverPopulator.accept(ItemStackBuilder.of(server.getMaterial())
@@ -59,7 +58,7 @@ public class ServerMenu extends Menu {
                                                    .loreClickable("подключиться к серверу")
                                                    .buildConsumer(e -> {
                                                        Player player = (Player) e.getWhoClicked();
-                                                       bungee.connect(getPlayer(), server.getId());
+                                                       server.connectPlayer(player);
                                                        Players.playSound(player, Sound.ENTITY_PLAYER_LEVELUP);
                                                    }));
             this.setItem(40, ItemStackBuilder.of(Material.COOKIE)
@@ -89,7 +88,6 @@ public class ServerMenu extends Menu {
 
         @Override
         public void redraw() {
-            BungeeCord bungee = Services.load(BungeeCord.class);
             MenuPopulator serversPopulator = SERVERS_SCHEME.newPopulator(this);
             this.setItem(0, ItemStackBuilder.head(Head.findByName("Red Arrow Left").getTexture())
                                             .nameClickable("&cНазад")
@@ -109,7 +107,7 @@ public class ServerMenu extends Menu {
                                                         .loreClickable("подключиться к серверу")
                                                         .buildConsumer(e -> {
                                                             Player player = (Player) e.getWhoClicked();
-                                                            bungee.connect(player, server.getId());
+                                                            server.connectPlayer(player);
                                                             Players.playSound(player, Sound.ENTITY_PLAYER_LEVELUP);
                                                         }));
 

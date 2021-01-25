@@ -1,0 +1,14 @@
+{
+  "MySQL": {
+    "Address": "localhost",
+    "Port": 3306,
+    "Database": "minigames",
+    "Username": "themicrophone",
+    "Password": "5ed5J3Q7qER7",
+    "Maximum-Pool-Size": 7,
+    "Minimum-Pool-Idle": 10,
+    "Maximum-Pool-Lifetime": 1800000,
+    "Maximum-Pool-Timeout": 5000,
+    "Use-SSL": false
+  }
+}

@@ -6,6 +6,7 @@ import com.gamma.hub.events.EventListener;
 import com.gamma.hub.managers.UserManager;
 import com.gamma.hub.model.Head;
 import com.gamma.hub.model.ServerInfo;
+import com.gamma.hub.npc.NpcManager;
 import com.pepej.papi.adventure.platform.bukkit.BukkitAudiences;
 import com.pepej.papi.ap.Plugin;
 import com.pepej.papi.ap.PluginDependency;
@@ -50,6 +51,7 @@ public class GammaHubPlugin extends PapiJavaPlugin {
         this.databaseManager = bind(new DatabaseManager());
         this.audiences = bind(BukkitAudiences.create(this));
         bindModule(new EventListener());
+        bindModule(new NpcManager());
 
     }
 }
