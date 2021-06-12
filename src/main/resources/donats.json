@@ -1,0 +1,42 @@
+[
+  {
+    "name": "&7Обычные игроки",
+    "material": "COOKIE",
+    "type": "DEFAULT",
+    "description": [
+      ""
+    ]
+  },
+  {
+    "name": "&2Вип игроки",
+    "material": "COOKIE",
+    "type": "VIP",
+    "description": [
+      ""
+    ]
+  },
+  {
+    "name": "&dПремиум игроки",
+    "material": "COOKIE",
+    "type": "PREMIUM",
+    "description": [
+      ""
+    ]
+  },
+  {
+    "name": "&9Гранд игроки",
+    "material": "COOKIE",
+    "type": "GRAND",
+    "description": [
+      ""
+    ]
+  },
+  {
+    "name": "&cАдмин. состав",
+    "material": "COOKIE",
+    "type": "STAFF",
+    "description": [
+      ""
+    ]
+  }
+]

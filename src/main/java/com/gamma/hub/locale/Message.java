@@ -83,6 +83,17 @@ public interface Message {
                     .clickEvent(ClickEvent.runCommand("/stacking")))
     );
 
+    Args1<String> NO_PERMISSION_MESSAGE = permission -> prefixed(text()
+            .color(RED)
+            .append(text("У Вас недостаточно прав"))
+            .hoverEvent(HoverEvent.showText(text(permission, AQUA)))
+    );
+
+    Args0 BONUS_COOLDOWN_MESSAGE = () -> prefixed(text()
+            .color(RED)
+            .append(text("Бонус ещё не созрел"))
+    );
+
     @FunctionalInterface
     interface Args0 {
         Component build();

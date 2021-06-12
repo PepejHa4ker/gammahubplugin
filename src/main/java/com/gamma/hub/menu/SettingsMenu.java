@@ -18,7 +18,7 @@ import org.bukkit.entity.Player;
 
 public class SettingsMenu extends Menu {
 
-    private static final MenuScheme SCHEME = new MenuScheme()
+    private static final MenuScheme SCHEME = MenuScheme.create()
             .maskEmpty(1)
             .mask("001010100")
             .maskEmpty(1);

@@ -1,8 +1,7 @@
 package com.gamma.hub.managers;
 
 import com.gamma.hub.model.User;
-import com.pepej.papi.checker.checker.nullness.qual.NonNull;
-import com.pepej.papi.checker.checker.nullness.qual.Nullable;
+
 import com.pepej.papi.events.Events;
 import com.pepej.papi.terminable.TerminableConsumer;
 import com.pepej.papi.terminable.module.TerminableModule;
@@ -13,13 +12,16 @@ import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
+
 
 public class UserManager implements TerminableModule {
 
 
     @Nullable
     public User getUser(final Player player) {
-        return User.getUsers().stream().filter(user -> user.getId().equals(player.getUniqueId())).findAny().orElse(loadUser(player));
+        return User.getUsers().stream().filter(user -> user.getId().equals(player.getUniqueId())).findAny().orElse(null);
     }
 
     public UserManager() {
@@ -32,7 +34,9 @@ public class UserManager implements TerminableModule {
     }
 
     private User loadUser(final Player player) {
-        return new User(player.getUniqueId(), player.getName());
+        User user = new User(player.getUniqueId(), player.getName());
+        User.getUsers().add(user);
+        return user;
     }
 
 
@@ -43,7 +47,12 @@ public class UserManager implements TerminableModule {
               .bindWith(consumer);
 
         Events.merge(PlayerEvent.class, PlayerQuitEvent.class, PlayerKickEvent.class)
-              .handler(e -> getUser(e.getPlayer()).unload())
+              .handler(e -> {
+                  final User user = getUser(e.getPlayer());
+                  if (user != null) {
+                      user.unload();
+                  }
+              })
               .bindWith(consumer);
     }
 }

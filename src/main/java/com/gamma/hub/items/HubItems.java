@@ -12,11 +12,6 @@ public final class HubItems {
                                                              .hideAttributes()
                                                              .enchant(Enchantment.ARROW_DAMAGE)
                                                              .build();
-    public static final ItemStack COMPARATOR = ItemStackBuilder.of(Material.REDSTONE_COMPARATOR)
-                                                                .nameClickable("&6Настройщик")
-                                                                .hideAttributes()
-                                                                .enchant(Enchantment.ARROW_DAMAGE)
-                                                                .build();
 
     public static final ItemStack LEASH = ItemStackBuilder.of(Material.LEASH)
             .nameClickable("&dБашня")

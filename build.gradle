@@ -20,19 +20,18 @@ repositories {
     maven { url 'https://repo.codemc.org/repository/maven-public' }
     maven { url 'https://hub.spigotmc.org/nexus/content/groups/public/' }
     maven { url "https://repo.dmulloy2.net/nexus/repository/public/" }
-    maven { url "https://repo.citizensnpcs.co/" }
+//    maven { url "https://repo.citizensnpcs.co/" }
 }
 
 dependencies {
     compileOnly("org.bstats:bstats-bukkit:1.7")
     compileOnly("org.spigotmc:spigot-api:1.12.2-R0.1-SNAPSHOT") {
-       exclude group: 'com.google.guava'
-       exclude group: 'com.google.code.gson'
-       exclude group: 'com.googlecode.json-simple'
        exclude group: 'commons-lang'
        exclude group: "org.yaml"
     }
     //papi
+    compileOnly("org.checkerframework:checker:3.7.0")
+
     compileOnly fileTree(dir: "libs")
     annotationProcessor fileTree(dir: "libs")
     //lombok
@@ -41,7 +40,7 @@ dependencies {
     //protocols
     compileOnly("com.comphenix.protocol:ProtocolLib:4.5.0")
     //npcs
-    compileOnly("net.citizensnpcs:citizens:2.0.22-SNAPSHOT")
+//    compileOnly("net.citizensnpcs:citizens:2.0.22-SNAPSHOT")
     compileOnly("com.zaxxer:HikariCP:3.3.1")
 }
 

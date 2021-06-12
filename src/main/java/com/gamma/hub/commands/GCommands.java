@@ -1,21 +1,40 @@
 package com.gamma.hub.commands;
 
+import com.gamma.hub.database.DatabaseAdapter;
 import com.gamma.hub.locale.Message;
+import com.gamma.hub.menu.ActivityMenu;
 import com.gamma.hub.metadata.PlayersMetadata;
-import com.pepej.papi.checker.checker.nullness.qual.NonNull;
 import com.pepej.papi.command.Commands;
 import com.pepej.papi.metadata.Metadata;
 import com.pepej.papi.metadata.MetadataMap;
+import com.pepej.papi.services.Services;
 import com.pepej.papi.terminable.TerminableConsumer;
 import com.pepej.papi.terminable.module.TerminableModule;
 import com.pepej.papi.utils.Players;
 import org.bukkit.entity.Entity;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.concurrent.TimeUnit;
 
 public class GCommands implements TerminableModule {
+
+    private final DatabaseAdapter adapter;
+
+    public GCommands() {
+        adapter = Services.getNullable(DatabaseAdapter.class);
+    }
+
     @Override
     public void setup(@NonNull final TerminableConsumer consumer) {
+        Commands.create()
+                .assertCooldown(5, TimeUnit.SECONDS)
+                .assertPlayer()
+                .handler(ctx -> {
+                    ctx.reply("&7Загружаю данные...");
+                    adapter.fetchJoinData(ctx.sender())
+                           .thenAcceptSync(data -> new ActivityMenu(data, ctx.sender()).open());
+                })
+                .registerAndBind(consumer, "joins", "заходы", "активность");
         Commands.create()
                 .assertCooldown(1, TimeUnit.SECONDS, "Подождите &a{cooldown}&6 секунд")
                 .assertPlayer()

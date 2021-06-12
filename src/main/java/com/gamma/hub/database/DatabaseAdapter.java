@@ -1,68 +1,109 @@
 package com.gamma.hub.database;
 
-import com.gamma.hub.GammaHubPlugin;
-import com.gamma.hub.model.DonatInfo;
-import com.pepej.papi.checker.checker.nullness.qual.NonNull;
-import com.pepej.papi.utils.UndashedUuids;
-import lombok.Cleanup;
-import lombok.SneakyThrows;
-import lombok.Synchronized;
+import com.pepej.papi.config.objectmapping.ConfigSerializable;
+import com.pepej.papi.config.objectmapping.meta.Setting;
+import com.pepej.papi.promise.Promise;
+import com.pepej.papi.scheduler.Schedulers;
+import com.pepej.papi.sql.Sql;
+import com.pepej.papi.sql.batch.BatchBuilder;
+import com.pepej.papi.sql.plugin.PapiSqlBatchBuilder;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 import org.bukkit.entity.Player;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
+import static java.lang.System.out;
+
 
 public class DatabaseAdapter {
-    private DatabaseAdapter() {}
-    public static final DatabaseAdapter INSTANCE = new DatabaseAdapter();
 
+    private final Sql sql;
 
-    @Synchronized
-    @SneakyThrows
-    public void insertGiftData(@NonNull final Player collector, @NonNull final long time, final DonatInfo.Type type ) {
-        @Cleanup final Connection connection = GammaHubPlugin.getInstance().getDatabaseManager().getConnection();
-        final PreparedStatement st = connection.prepareStatement("INSERT IGNORE INTO hub (id, time, type) VALUES (?, ?, ?);");
-                st.setString(1, UndashedUuids.toString(collector.getUniqueId()));
-        st.setLong(2, time);
-        st.setString(3, type.name());
-
-        st.execute();
-
+    public DatabaseAdapter(Sql sql) {
+        this.sql = sql;
     }
-    @Synchronized
-    @SneakyThrows
-    public void updateGiftData(@NonNull final Player collector, @NonNull final long time,  final DonatInfo.Type type ) {
-        @Cleanup final Connection connection =GammaHubPlugin.getInstance().getDatabaseManager().getConnection();
-        final PreparedStatement st = connection.prepareStatement("UPDATE IGNORE hub SET time = ? WHERE id = ? AND type = ?;");
-        st.setLong(1, time);
-        st.setString(2, UndashedUuids.toString(collector.getUniqueId()));
-        st.setString(3, type.name());
-        st.execute();
 
+    public void insertJoinData(Player user) {
+        sql.executeAsync("INSERT INTO t_joins (userId, username, join_ts, ip) VALUES (?, ?, ?, ?);", st -> {
+            st.setString(1, user.getUniqueId().toString());
+            st.setString(2, user.getName());
+            st.setLong(3, System.currentTimeMillis());
+            st.setString(4, user.getAddress().getHostString());
+        });
     }
-    @Synchronized
-    @SneakyThrows
-    public boolean userExists(@NonNull final Player collector, final DonatInfo.Type type ) {
-        @Cleanup final Connection connection =GammaHubPlugin.getInstance().getDatabaseManager().getConnection();
-        final PreparedStatement st = connection.prepareStatement("SELECT * FROM hub WHERE id = ? AND type = ?;");
-        st.setString(1, UndashedUuids.toString(collector.getUniqueId()));
-        st.setString(2, type.name());
-        ResultSet rs = st.executeQuery();
-        return rs.next();
 
-    }
-    @Synchronized
-    @SneakyThrows
-    public long getLastTakeDate(@NonNull final Player collector, final DonatInfo.Type type ) {
-        @Cleanup final Connection connection = GammaHubPlugin.getInstance().getDatabaseManager().getConnection();
-        final PreparedStatement st = connection.prepareStatement("SELECT * FROM hub WHERE id = ? AND type = ?;");
-        st.setString(1, UndashedUuids.toString(collector.getUniqueId()));
-        st.setString(2, type.name());
-        ResultSet rs = st.executeQuery();
-        return rs.getLong("time");
+    public Promise<List<JoinData>> fetchJoinData(Player player) {
+        return sql.queryAsync("SELECT * FROM t_joins WHERE userId = ?", st -> st.setString(1, player.getUniqueId().toString()), rs -> {
+            List<JoinData> returnList = new ArrayList<>();
+            while (rs.next()) {
+                returnList.add(
+                        JoinData.builder()
+                                .userId(UUID.fromString(rs.getString("userId")))
+                                .username(rs.getString("username"))
+                                .joinTs(rs.getLong("join_ts"))
+                                .ip(rs.getString("ip"))
+                                .build()
 
+                );
+            }
+            return returnList;
+        }).thenApplyAsync(Optional::get);
 
     }
 
-}
+    public Promise<List<ServerJoinData>> fetchServerJoinData(String serverId) {
+        return sql.queryAsync("SELECT * FROM t_servers WHERE serverName = ?", st -> st.setString(1, serverId), rs -> {
+            List<ServerJoinData> returnList = new ArrayList<>();
+            while (rs.next()) {
+                returnList.add(
+                        ServerJoinData.builder()
+                                .userId(UUID.fromString(rs.getString("userId")))
+                                .username(rs.getString("username"))
+                                .joinTs(rs.getLong("join_ts"))
+                                .serverName(rs.getString("serverName"))
+                                .build()
+
+                );
+            }
+            return returnList;
+        }).thenApplyAsync(Optional::get);
+
+    }
+
+    public void insertServerData(Player user, String server) {
+        sql.executeAsync("INSERT INTO t_servers (userId, username, serverName, join_ts) VALUES (?, ?, ?, ?);", st -> {
+            st.setString(1, user.getUniqueId().toString());
+            st.setString(2, user.getName());
+            st.setString(3, server);
+            st.setLong(4, System.currentTimeMillis());
+
+        });
+    }
+
+
+        @Value
+        @Builder
+        @FieldDefaults(level = AccessLevel.PRIVATE)
+        public static class JoinData {
+            UUID userId;
+            String username;
+            long joinTs;
+            String ip;
+        }
+
+    @Value
+    @Builder
+    @FieldDefaults(level = AccessLevel.PRIVATE)
+    public static class ServerJoinData {
+        UUID userId;
+        String username;
+        long joinTs;
+        String serverName;
+    }
+
+
+    }
